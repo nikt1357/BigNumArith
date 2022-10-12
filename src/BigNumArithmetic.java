@@ -1,6 +1,6 @@
 import java.io.FileNotFoundException;
 
-public class Main {
+public class BigNumArithmetic {
 
     public static void main(String[] args) {
         try {
