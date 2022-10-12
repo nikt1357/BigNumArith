@@ -18,15 +18,23 @@ public class BigNumArithmetic {
                     String array[] = s.split("\\s+");
                     for(int i = 0; i < array.length; i++) {
                         if (!array[i].equals("+") || !array[i].equals("*") || !array[i].equals("^")) {
-                            stack.push(s);
+                            stack.push(array[i]);
                         } else {
                             if (array[i].equals("+")) {
                                 Object num1 = stack.pop();
+                                createList(num1);
                                 Object num2 = stack.pop();
+                                createList(num2);
                             } else if (array[i].equals("*")) {
-
+                                Object num1 = stack.pop();
+                                createList(num1);
+                                Object num2 = stack.pop();
+                                createList(num2);
                             } else if (array[i].equals("^")) {
-
+                                Object num1 = stack.pop();
+                                createList(num1);
+                                Object num2 = stack.pop();
+                                createList(num2);
                             }
                         }
                     }
@@ -38,6 +46,17 @@ public class BigNumArithmetic {
             System.out.println(e.getMessage());
             System.out.println("File could not be opened.");
         }
+    }
+
+    public static void createList(Object obj) {
+        LList list = new LList();
+        String s = obj.toString();
+        char[] charArray = s.toCharArray();
+        for (int i = charArray.length; i > 0; i--) {
+//          list.append(charArray[i - 1]);
+            System.out.println(charArray[i - 1]);
+        }
+//        return list;
     }
 
 }
