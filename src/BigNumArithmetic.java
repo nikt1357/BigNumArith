@@ -15,9 +15,9 @@ public class BigNumArithmetic {
                 while (in.hasNext()) {
                     AStack stack = new AStack();
                     String s = in.nextLine();
-                    String array[] = s.split("\\s+");
+                    String[] array = s.split("\\s+");
                     for(int i = 0; i < array.length; i++) {
-                        if (!array[i].equals("+") || !array[i].equals("*") || !array[i].equals("^")) {
+                        if ((!array[i].equals("+")) && (!array[i].equals("*")) && (!array[i].equals("^"))) {
                             stack.push(array[i]);
                         } else {
                             if (array[i].equals("+")) {
