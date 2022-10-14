@@ -21,11 +21,10 @@ public class BigNumArithmetic {
                             stack.push(value);
                         } else {
                             if (value.equals("+")) {
+                                LList sum = new LList();
                                 Object num1 = stack.pop();
-                                reverse(num1);
-                                System.out.println();
                                 Object num2 = stack.pop();
-                                reverse(num2);
+                                sum = addition(reverse(num1), reverse(num2), sum);
                             } else if (value.equals("*")) {
                                 Object num1 = stack.pop();
                                 reverse(num1);
@@ -64,10 +63,58 @@ public class BigNumArithmetic {
         return list;
     }
 
-    public static LList addition(LList num1, LList num2) {
-        LList sum = new LList();
-
-
+    public static LList addition(LList num1, LList num2, LList sum) {
+        if (num1.isEmpty() && num2.isEmpty()) {
+            return sum;
+        } else if (!num1.isEmpty() && num2.isEmpty()) {
+            int carry = 0;
+            sum.moveToStart();
+            if (sum.getValue() != null) {
+                carry = (int) sum.getValue();
+            }
+            num1.moveToStart();
+            sum.insert(num1.getValue());
+        } else if (num1.isEmpty() && !num2.isEmpty()) {
+            int carry = 0;
+            sum.moveToStart();
+            if (sum.getValue() != null) {
+                carry = (int) sum.getValue();
+            }
+            num2.moveToStart();
+            sum.insert(num2.getValue());
+        } else {
+            num1.moveToStart();
+            num2.moveToStart();
+            int digitSum = ((int) num1.getValue()) + ((int) num2.getValue());
+            num1.remove();
+            num2.remove();
+            if (digitSum > 9) {
+                int ones = digitSum - 10;
+                int carry = 0;
+                sum.moveToStart();
+                if (sum.getValue() != null) {
+                    carry = (int) sum.getValue();
+                }
+                sum.insert(ones + carry);
+                sum.moveToStart();
+                sum.insert(1);
+                sum = addition(num1, num2, sum);
+            } else {
+                int carry = 0;
+                sum.moveToStart();
+                if (sum.getValue() != null) {
+                    carry = (int) sum.getValue();
+                }
+                int carrySum = digitSum + carry;
+                if (carrySum > 9) {
+                    sum.moveToStart();
+                    sum.insert(1);
+                } else {
+                    sum.insert(digitSum + carry);
+                }
+                sum = addition(num1, num2, sum);
+            }
+        }
         return sum;
     }
 
