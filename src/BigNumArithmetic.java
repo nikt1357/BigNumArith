@@ -16,25 +16,28 @@ public class BigNumArithmetic {
                     AStack stack = new AStack();
                     String s = in.nextLine();
                     String[] array = s.split("\\s+");
-                    for(int i = 0; i < array.length; i++) {
-                        if ((!array[i].equals("+")) && (!array[i].equals("*")) && (!array[i].equals("^"))) {
-                            stack.push(array[i]);
+                    for (String value : array) {
+                        if ((!value.equals("+")) && (!value.equals("*")) && (!value.equals("^"))) {
+                            stack.push(value);
                         } else {
-                            if (array[i].equals("+")) {
+                            if (value.equals("+")) {
                                 Object num1 = stack.pop();
-                                createList(num1);
+                                reverse(num1);
+                                System.out.println();
                                 Object num2 = stack.pop();
-                                createList(num2);
-                            } else if (array[i].equals("*")) {
+                                reverse(num2);
+                            } else if (value.equals("*")) {
                                 Object num1 = stack.pop();
-                                createList(num1);
+                                reverse(num1);
+                                System.out.println();
                                 Object num2 = stack.pop();
-                                createList(num2);
-                            } else if (array[i].equals("^")) {
+                                reverse(num2);
+                            } else if (value.equals("^")) {
                                 Object num1 = stack.pop();
-                                createList(num1);
+                                reverse(num1);
+                                System.out.println();
                                 Object num2 = stack.pop();
-                                createList(num2);
+                                reverse(num2);
                             }
                         }
                     }
@@ -48,15 +51,22 @@ public class BigNumArithmetic {
         }
     }
 
-    public static void createList(Object obj) {
+    public static LList reverse(Object obj) {
         LList list = new LList();
         String s = obj.toString();
         char[] charArray = s.toCharArray();
         for (int i = charArray.length; i > 0; i--) {
-//          list.append(charArray[i - 1]);
-            System.out.println(charArray[i - 1]);
+          list.append(charArray[i - 1]);
+          System.out.println(charArray[i - 1]);
         }
-//        return list;
+        return list;
+    }
+
+    public static LList addition(LList num1, LList num2) {
+        LList sum = new LList();
+
+
+        return sum;
     }
 
 }
