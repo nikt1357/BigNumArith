@@ -25,16 +25,15 @@ public class BigNumArithmetic {
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
                                 sum = addition(reverse(num1), reverse(num2), sum);
+                                stack.push(sum);
                             } else if (value.equals("*")) {
                                 Object num1 = stack.pop();
                                 reverse(num1);
-                                System.out.println();
                                 Object num2 = stack.pop();
                                 reverse(num2);
                             } else if (value.equals("^")) {
                                 Object num1 = stack.pop();
                                 reverse(num1);
-                                System.out.println();
                                 Object num2 = stack.pop();
                                 reverse(num2);
                             }
@@ -58,7 +57,6 @@ public class BigNumArithmetic {
         char[] charArray = s.toCharArray();
         for (int i = charArray.length; i > 0; i--) {
           list.append(charArray[i - 1]);
-          System.out.println(charArray[i - 1]);
         }
         return list;
     }
@@ -69,31 +67,45 @@ public class BigNumArithmetic {
         } else if (!num1.isEmpty() && num2.isEmpty()) {
             int carry = 0;
             sum.moveToStart();
-            if (sum.getValue() != null) {
-                carry = (int) sum.getValue();
+            try {
+                if (!sum.isAtEnd()) {
+                    carry = (int) sum.getValue();
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println(e.getMessage());
             }
             num1.moveToStart();
             sum.insert(num1.getValue());
+            return sum;
         } else if (num1.isEmpty() && !num2.isEmpty()) {
             int carry = 0;
             sum.moveToStart();
-            if (sum.getValue() != null) {
-                carry = (int) sum.getValue();
+            try {
+                if (!sum.isAtEnd()) {
+                    carry = (int) sum.getValue();
+                }
+            } catch (NoSuchElementException e) {
+                System.out.println(e.getMessage());
             }
             num2.moveToStart();
             sum.insert(num2.getValue());
+            return sum;
         } else {
             num1.moveToStart();
             num2.moveToStart();
-            int digitSum = ((int) num1.getValue()) + ((int) num2.getValue());
+            int digitSum = (Character.getNumericValue((Character) num1.getValue())) + (Character.getNumericValue((Character) num2.getValue()));
             num1.remove();
             num2.remove();
             if (digitSum > 9) {
                 int ones = digitSum - 10;
                 int carry = 0;
                 sum.moveToStart();
-                if (sum.getValue() != null) {
-                    carry = (int) sum.getValue();
+                try {
+                    if (!sum.isAtEnd()) {
+                        carry = (int) sum.getValue();
+                    }
+                } catch (NoSuchElementException e) {
+                    System.out.println(e.getMessage());
                 }
                 sum.insert(ones + carry);
                 sum.moveToStart();
@@ -102,8 +114,12 @@ public class BigNumArithmetic {
             } else {
                 int carry = 0;
                 sum.moveToStart();
-                if (sum.getValue() != null) {
-                    carry = (int) sum.getValue();
+                try {
+                    if (!sum.isAtEnd()) {
+                        carry = (int) sum.getValue();
+                    }
+                } catch (NoSuchElementException e) {
+                    System.out.println(e.getMessage());
                 }
                 int carrySum = digitSum + carry;
                 if (carrySum > 9) {
