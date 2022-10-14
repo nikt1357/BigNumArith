@@ -53,7 +53,9 @@ public class BigNumArithmetic {
 
     public static LList reverse(Object obj) {
         LList list = new LList();
+        String strPattern = "^0+(?!$)";
         String s = obj.toString();
+        s = s.replaceAll(strPattern, "");
         char[] charArray = s.toCharArray();
         for (int i = charArray.length; i > 0; i--) {
           list.append(charArray[i - 1]);
