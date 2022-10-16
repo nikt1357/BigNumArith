@@ -16,6 +16,12 @@ public class BigNumArithmetic {
                     AStack stack = new AStack();
                     String s = in.nextLine();
                     String[] array = s.split("\\s+");
+                    for (int i = 0; i < array.length; i++) {
+                        String strPattern = "^0+(?!$)";
+                        String num = array[i];
+                        num = num.replaceAll(strPattern, "");
+                        System.out.print(num + " ");
+                    }
                     for (String value : array) {
                         if ((!value.equals("+")) && (!value.equals("*")) && (!value.equals("^"))) {
                             stack.push(value);
@@ -27,18 +33,13 @@ public class BigNumArithmetic {
                                 sum = addition(reverse(num1), reverse(num2), sum);
                                 stack.push(sum);
                             } else if (value.equals("*")) {
-                                Object num1 = stack.pop();
-                                reverse(num1);
-                                Object num2 = stack.pop();
-                                reverse(num2);
-                            } else if (value.equals("^")) {
-                                Object num1 = stack.pop();
-                                reverse(num1);
-                                Object num2 = stack.pop();
-                                reverse(num2);
+
+                            } else {
+
                             }
                         }
                     }
+                    System.out.println("= " + stack.topValue());
                 }
                 in.close();
 
@@ -51,9 +52,7 @@ public class BigNumArithmetic {
 
     public static LList reverse(Object obj) {
         LList list = new LList();
-        String strPattern = "^0+(?!$)";
         String s = obj.toString();
-        s = s.replaceAll(strPattern, "");
         char[] charArray = s.toCharArray();
         for (int i = charArray.length; i > 0; i--) {
           list.append(charArray[i - 1]);
