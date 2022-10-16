@@ -39,9 +39,23 @@ public class BigNumArithmetic {
                                 String strPattern = "^0+(?!$)";
                                 sumString = sumString.replaceAll(strPattern, "");
                                 stack.push(sumString);
-                            //} else if (value.equals("*")) {
-
-                            //} else {
+                            } else if (value.equals("*")) {
+                                LList product = new LList();
+                                LList loop = new LList();
+                                AStack mult = new AStack();
+                                Object num1 = stack.pop();
+                                Object num2 = stack.pop();
+                                product = multiplication(reverse(num1), reverse(num2), mult, loop, product);
+                                String productString = "";
+                                product.moveToStart();
+                                for (int i = 0; i < product.length(); i++) {
+                                    productString = productString + product.getValue();
+                                    product.next();
+                                }
+                                String strPattern = "^0+(?!$)";
+                                productString = productString.replaceAll(strPattern, "");
+                                stack.push(productString);
+                            } else {
 
                             }
                         }
@@ -124,22 +138,94 @@ public class BigNumArithmetic {
         return sum;
     }
 
-//    public static LList multiplication(LList num1, LList num2, LList sum) {
-//        LList top;
-//        LList bottom;
-//        if (num1.length() > num2.length()) {
-//            top = num1;
-//            bottom = num2;
-//        } else if (num2.length() > num1.length()) {
-//            top = num2;
-//            bottom = num1;
-//        }
-//        if (num1.isEmpty() && num2.isEmpty()) {
-//            // Call addition on remaining nums
-//        } else {
-//            // Multiply
-//        }
-//    }
+    public static LList multiplication(LList num1, LList num2, AStack stack, LList loop, LList product) {
+        LList top;
+        LList bottom;
+
+        if (num1.length() > num2.length()) {
+            top = num1;
+            bottom = num2;
+        } else if (num2.length() > num1.length()) {
+            top = num2;
+            bottom = num1;
+        } else {
+            top = num1;
+            bottom = num2;
+        }
+
+        if (bottom.isEmpty()) {
+            while (stack.length() > 1) {
+                Object first = stack.pop();
+                Object second = stack.pop();
+                product = addition(reverse(first), reverse(second), product);
+                String sumString = "";
+                product.moveToStart();
+                for (int i = 0; i < product.length(); i++) {
+                    sumString = sumString + product.getValue();
+                    product.next();
+                }
+                String strPattern = "^0+(?!$)";
+                sumString = sumString.replaceAll(strPattern, "");
+                stack.push(sumString);
+            }
+
+            product.moveToStart();
+            product.insert(stack.pop());
+            return product;
+        } else {
+            top.moveToStart();
+            bottom.moveToStart();
+            while (!top.isAtEnd()) {
+                int digitMult = (Character.getNumericValue((Character) bottom.getValue())) * (Character.getNumericValue((Character) top.getValue()));
+                if (digitMult > 9) {
+                    int ones = digitMult % 10;
+                    int tens = digitMult / 10;
+                    int carry = getRemainder(loop);
+                    int carrySum = ones + carry;
+                    loop.moveToStart();
+                    if (carrySum > 9) {
+                        loop.insert(carrySum % 10);
+                        loop.moveToStart();
+                        loop.insert(carrySum / 10);
+                    } else {
+                        loop.insert(carrySum);
+                        loop.moveToStart();
+                        loop.insert(tens);
+                    }
+                    top.next();
+                } else {
+                    int carry = getRemainder(loop);
+                    int carrySum = digitMult + carry;
+                    loop.moveToStart();
+                    if (carrySum > 9) {
+                        loop.insert(carrySum % 10);
+                        loop.moveToStart();
+                        loop.insert(carrySum / 10);
+                    } else {
+                        loop.insert(carrySum);
+                        loop.moveToStart();
+                        loop.insert(0);
+                    }
+                    top.next();
+                }
+            }
+
+            String sumString = "";
+            loop.moveToStart();
+            for (int i = 0; i < loop.length(); i++) {
+                sumString = sumString + loop.getValue();
+                loop.next();
+            }
+            String strPattern = "^0+(?!$)";
+            sumString = sumString.replaceAll(strPattern, "");
+            stack.push(sumString);
+            bottom.moveToStart();
+            bottom.remove();
+            loop.clear();
+            product = multiplication(top, bottom, stack, loop, product);
+        }
+        return product;
+    }
 
     public static int getRemainder(LList list) {
         int carry = 0;
