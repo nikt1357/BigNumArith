@@ -15,14 +15,14 @@ public class BigNumArithmetic {
                 while (in.hasNext()) {
                     AStack stack = new AStack();
                     String s = in.nextLine();
-                    String[] array = s.split("\\s+");
-                    for (int i = 0; i < array.length; i++) {
+                    String[] AList = s.split("\\s+");
+                    for (int i = 0; i < AList.length; i++) {
                         String strPattern = "^0+(?!$)";
-                        String num = array[i];
+                        String num = AList[i];
                         num = num.replaceAll(strPattern, "");
                         System.out.print(num + " ");
                     }
-                    for (String value : array) {
+                    for (String value : AList) {
                         if ((!value.equals("+")) && (!value.equals("*")) && (!value.equals("^"))) {
                             stack.push(value);
                         } else {
