@@ -46,7 +46,9 @@ public class BigNumArithmetic {
                             }
                         }
                     }
-                    System.out.println("= " + stack.pop());
+                    if (AList.length > 1) {
+                        System.out.println("= " + stack.pop());
+                    }
                 }
                 in.close();
             }
@@ -67,9 +69,11 @@ public class BigNumArithmetic {
             sum.moveToStart();
             if (carrySum > 9) {
                 sum.insert(carrySum - 10);
+                sum.moveToStart();
                 sum.insert(1);
             } else {
                 sum.insert(carrySum);
+                sum.moveToStart();
                 sum.insert(0);
             }
             sum = addition(num1, num2, sum);
@@ -107,6 +111,7 @@ public class BigNumArithmetic {
                 int carrySum = digitSum + carry;
                 sum.moveToStart();
                 if (carrySum > 9) {
+                    sum.insert(carrySum - 10);
                     sum.insert(1);
                 } else {
                     sum.insert(carrySum);
@@ -118,6 +123,23 @@ public class BigNumArithmetic {
         }
         return sum;
     }
+
+//    public static LList multiplication(LList num1, LList num2, LList sum) {
+//        LList top;
+//        LList bottom;
+//        if (num1.length() > num2.length()) {
+//            top = num1;
+//            bottom = num2;
+//        } else if (num2.length() > num1.length()) {
+//            top = num2;
+//            bottom = num1;
+//        }
+//        if (num1.isEmpty() && num2.isEmpty()) {
+//            // Call addition on remaining nums
+//        } else {
+//            // Multiply
+//        }
+//    }
 
     public static int getRemainder(LList list) {
         int carry = 0;
@@ -132,10 +154,6 @@ public class BigNumArithmetic {
         }
         return carry;
     }
-
-//    public static LList multiplication(LList num1, LList num2, LList sum) {
-//
-//    }
 
     public static LList reverse(Object obj) {
         LList list = new LList();
