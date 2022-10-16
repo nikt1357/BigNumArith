@@ -39,9 +39,9 @@ public class BigNumArithmetic {
                                 String strPattern = "^0+(?!$)";
                                 sumString = sumString.replaceAll(strPattern, "");
                                 stack.push(sumString);
-                            } else if (value.equals("*")) {
+                            //} else if (value.equals("*")) {
 
-                            } else {
+                            //} else {
 
                             }
                         }
@@ -71,9 +71,17 @@ public class BigNumArithmetic {
                 System.out.println(e.getMessage());
             }
             num1.moveToStart();
-            sum.insert(Character.getNumericValue((Character) num1.getValue()) + carry);
+            int carrySum = Character.getNumericValue((Character) num1.getValue()) + carry;
             num1.remove();
-            return sum;
+            sum.moveToStart();
+            if (carrySum > 9) {
+                sum.insert(carrySum - 10);
+                sum.insert(1);
+            } else {
+                sum.insert(carrySum);
+                sum.insert(0);
+            }
+            sum = addition(num1, num2, sum);
         } else if (num1.isEmpty() && !num2.isEmpty()) {
             int carry = 0;
             sum.moveToStart();
@@ -86,9 +94,19 @@ public class BigNumArithmetic {
                 System.out.println(e.getMessage());
             }
             num2.moveToStart();
-            sum.insert(Character.getNumericValue((Character) num2.getValue()) + carry);
+            int carrySum = Character.getNumericValue((Character) num2.getValue()) + carry;
             num2.remove();
-            return sum;
+            sum.moveToStart();
+            if (carrySum > 9) {
+                sum.insert(carrySum - 10);
+                sum.moveToStart();
+                sum.insert(1);
+            } else {
+                sum.insert(carrySum);
+                sum.moveToStart();
+                sum.insert(0);
+            }
+            sum = addition(num1, num2, sum);
         } else {
             num1.moveToStart();
             num2.moveToStart();
@@ -128,6 +146,7 @@ public class BigNumArithmetic {
                     sum.insert(1);
                 } else {
                     sum.insert(carrySum);
+                    sum.moveToStart();
                     sum.insert(0);
                 }
                 sum = addition(num1, num2, sum);
