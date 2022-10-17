@@ -236,14 +236,14 @@ public class BigNumArithmetic {
             product = multiplication(base, reverse(num1), stack, 0, product);
             int i = n/2;
 
-            return exponential(listToString(product), listToString(reverse(i)));
+            return exponential(listToString(product), String.valueOf(i));
         } else {
             AStack stack = new AStack(100);
             LList product = new LList();
             product = multiplication(base, reverse(num1), new AStack(100), 0, product);
             int i = (n - 1) / 2;
 
-            String x = exponential(listToString(product), listToString(reverse(i)));
+            String x = exponential(listToString(product), String.valueOf(i));
             product.clear();
             return listToString(multiplication(base, reverse(x), stack, 0, product));
         }
