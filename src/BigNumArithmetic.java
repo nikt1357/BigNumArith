@@ -30,44 +30,19 @@ public class BigNumArithmetic {
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
                                 sum = addition(reverse(num1), reverse(num2), sum);
-                                String sumString = "";
-                                sum.moveToStart();
-                                for (int i = 0; i < sum.length(); i++) {
-                                    sumString = sumString + sum.getValue();
-                                    sum.next();
-                                }
-                                String strPattern = "^0+(?!$)";
-                                sumString = sumString.replaceAll(strPattern, "");
-                                stack.push(sumString);
+                                stack.push(listToString(sum));
                             } else if (value.equals("*")) {
                                 LList product = new LList();
                                 AStack mult = new AStack(100);
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
                                 product = multiplication(reverse(num1), reverse(num2), mult, 0, product);
-                                String productString = "";
-                                product.moveToStart();
-                                for (int i = 0; i < product.length(); i++) {
-                                    productString = productString + product.getValue();
-                                    product.next();
-                                }
-                                String strPattern = "^0+(?!$)";
-                                productString = productString.replaceAll(strPattern, "");
-                                stack.push(productString);
+                                stack.push(listToString(product));
                             } else {
-                                LList result = new LList();
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
-                                result = exponential(num2.toString(), num1.toString(), result);
-                                String resultString = "";
-                                result.moveToStart();
-                                for (int i = 0; i < result.length(); i++) {
-                                    resultString = resultString + result.getValue();
-                                    result.next();
-                                }
-                                String strPattern = "^0+(?!$)";
-                                resultString = resultString.replaceAll(strPattern, "");
-                                stack.push(resultString);
+                                String result = exponential(num2.toString(), num1.toString());
+                                stack.push(result);
                             }
                         }
                     }
@@ -167,15 +142,7 @@ public class BigNumArithmetic {
                 Object first = stack.pop();
                 Object second = stack.pop();
                 loop = addition(reverse(first), reverse(second), loop);
-                String sumString = "";
-                loop.moveToStart();
-                for (int i = 0; i < loop.length(); i++) {
-                    sumString = sumString + loop.getValue();
-                    loop.next();
-                }
-                String strPattern = "^0+(?!$)";
-                sumString = sumString.replaceAll(strPattern, "");
-                stack.push(sumString);
+                stack.push(listToString(loop));
                 loop.clear();
             }
             product.moveToStart();
@@ -239,63 +206,42 @@ public class BigNumArithmetic {
         return product;
     }
 
-    public static LList exponential(String num1, String num2, LList result) {
+    public static String exponential(String num1, String num2) {
 
         LList base = reverse(num1);
         int n = Integer.parseInt(num2);
 
-        System.out.println("Base = " + base);
-        System.out.println("n = " + n);
-
         if (n == 0) {
-            result.moveToStart();
-            result.insert(1);
-            return result;
+            return "1";
         } else if ((n % 2) == 0) {
             AStack stack = new AStack(100);
             LList product = new LList();
             product = multiplication(base, reverse(num1), stack, 0, product);
             int i = n/2;
 
-            String productString = "";
-            product.moveToStart();
-            for (int j = 0; j < product.length(); j++) {
-                productString = productString + product.getValue();
-                product.next();
-            }
-
-            String exponent = "";
-            reverse(i).moveToStart();
-            for (int j = 0; j < reverse(i).length(); j++) {
-                exponent = exponent + reverse(i).getValue();
-                reverse(i).next();
-            }
-
-            return exponential(productString, exponent, result);
+            return exponential(listToString(product), listToString(reverse(i)));
         } else {
             AStack stack = new AStack(100);
             LList product = new LList();
             product = multiplication(base, reverse(num1), new AStack(100), 0, product);
-            int i = (n - 1) /2;
+            int i = (n - 1) / 2;
 
-            String productString = "";
-            product.moveToStart();
-            for (int j = 0; j < product.length(); j++) {
-                productString = productString + product.getValue();
-                product.next();
-            }
-
-            String exponent = "";
-            reverse(i).moveToStart();
-            for (int j = 0; j < reverse(i).length(); j++) {
-                exponent = exponent + reverse(i).getValue();
-                reverse(i).next();
-            }
-
-            LList x = exponential(productString, exponent, result);
-            product = new LList();
-            return multiplication(reverse(num1), x, stack, 0, product);
+            String x = exponential(listToString(product), listToString(reverse(i)));
+            product.clear();
+            return listToString(multiplication(base, reverse(x), stack, 0, product));
         }
+    }
+
+    public static String listToString(LList list) {
+        String s = "";
+        list.moveToStart();
+        for (int i = 0; i < list.length(); i++) {
+            s = s + list.getValue();
+            list.next();
+        }
+        String strPattern = "^0+(?!$)";
+        s = s.replaceAll(strPattern, "");
+        return s;
     }
 
     public static int getRemainder(LList list) {
