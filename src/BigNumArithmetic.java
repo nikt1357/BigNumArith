@@ -41,11 +41,10 @@ public class BigNumArithmetic {
                                 stack.push(sumString);
                             } else if (value.equals("*")) {
                                 LList product = new LList();
-                                LList loop = new LList();
-                                AStack mult = new AStack();
+                                AStack mult = new AStack(100);
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
-                                product = multiplication(reverse(num1), reverse(num2), mult, loop, 0, product);
+                                product = multiplication(reverse(num1), reverse(num2), mult, 0, product);
                                 String productString = "";
                                 product.moveToStart();
                                 for (int i = 0; i < product.length(); i++) {
@@ -56,7 +55,19 @@ public class BigNumArithmetic {
                                 productString = productString.replaceAll(strPattern, "");
                                 stack.push(productString);
                             } else {
-
+                                LList result = new LList();
+                                Object num1 = stack.pop();
+                                Object num2 = stack.pop();
+                                result = exponential(num2.toString(), num1.toString(), result);
+                                String resultString = "";
+                                result.moveToStart();
+                                for (int i = 0; i < result.length(); i++) {
+                                    resultString = resultString + result.getValue();
+                                    result.next();
+                                }
+                                String strPattern = "^0+(?!$)";
+                                resultString = resultString.replaceAll(strPattern, "");
+                                stack.push(resultString);
                             }
                         }
                     }
@@ -138,19 +149,17 @@ public class BigNumArithmetic {
         return sum;
     }
 
-    public static LList multiplication(LList num1, LList num2, AStack stack, LList loop, int count, LList product) {
+    public static LList multiplication(LList num1, LList num2, AStack stack, int count, LList product) {
         LList top;
         LList bottom;
+        LList loop = new LList();
 
-        if (num1.length() > num2.length()) {
+        if (num1.length() >= num2.length()) {
             top = num1;
             bottom = num2;
-        } else if (num2.length() > num1.length()) {
+        } else {
             top = num2;
             bottom = num1;
-        } else {
-            top = num1;
-            bottom = num2;
         }
 
         if (bottom.isEmpty()) {
@@ -167,6 +176,7 @@ public class BigNumArithmetic {
                 String strPattern = "^0+(?!$)";
                 sumString = sumString.replaceAll(strPattern, "");
                 stack.push(sumString);
+                loop.clear();
             }
             product.moveToStart();
             product.insert(stack.pop());
@@ -175,22 +185,22 @@ public class BigNumArithmetic {
             top.moveToStart();
             bottom.moveToStart();
             while (!top.isAtEnd()) {
-                int digitMult = (Character.getNumericValue((Character) bottom.getValue())) * (Character.getNumericValue((Character) top.getValue()));
+                int b = Character.getNumericValue((Character) bottom.getValue());
+                int t = Character.getNumericValue((Character) top.getValue());
+                int digitMult = b * t;
                 if (digitMult > 9) {
-                    int ones = digitMult % 10;
-                    int tens = digitMult / 10;
                     int carry = getRemainder(loop);
-                    int carrySum = ones + carry;
+                    int carrySum = digitMult + carry;
+                    int ones = carrySum % 10;
+                    int tens = carrySum / 10;
                     loop.moveToStart();
                     if (carrySum > 9) {
-                        loop.insert(carrySum % 10);
-                        loop.moveToStart();
-                        loop.insert(carrySum / 10);
+                        loop.insert(ones);
                     } else {
                         loop.insert(carrySum);
-                        loop.moveToStart();
-                        loop.insert(tens);
                     }
+                    loop.moveToStart();
+                    loop.insert(tens);
                     top.next();
                 } else {
                     int carry = getRemainder(loop);
@@ -223,11 +233,69 @@ public class BigNumArithmetic {
             stack.push(sumString);
             bottom.moveToStart();
             bottom.remove();
-            loop.clear();
             count++;
-            product = multiplication(top, bottom, stack, loop, count, product);
+            product = multiplication(top, bottom, stack, count, product);
         }
         return product;
+    }
+
+    public static LList exponential(String num1, String num2, LList result) {
+
+        LList base = reverse(num1);
+        int n = Integer.parseInt(num2);
+
+        System.out.println("Base = " + base);
+        System.out.println("n = " + n);
+
+        if (n == 0) {
+            result.moveToStart();
+            result.insert(1);
+            return result;
+        } else if ((n % 2) == 0) {
+            AStack stack = new AStack(100);
+            LList product = new LList();
+            product = multiplication(base, reverse(num1), stack, 0, product);
+            int i = n/2;
+
+            String productString = "";
+            product.moveToStart();
+            for (int j = 0; j < product.length(); j++) {
+                productString = productString + product.getValue();
+                product.next();
+            }
+
+            String exponent = "";
+            reverse(i).moveToStart();
+            for (int j = 0; j < reverse(i).length(); j++) {
+                exponent = exponent + reverse(i).getValue();
+                reverse(i).next();
+            }
+
+            return exponential(productString, exponent, result);
+        } else {
+            AStack stack = new AStack(100);
+            LList product = new LList();
+            product = multiplication(base, reverse(num1), new AStack(100), 0, product);
+            int i = (n - 1) /2;
+
+            String productString = "";
+            product.moveToStart();
+            for (int j = 0; j < product.length(); j++) {
+                productString = productString + product.getValue();
+                product.next();
+            }
+
+            String exponent = "";
+            reverse(i).moveToStart();
+            for (int j = 0; j < reverse(i).length(); j++) {
+                exponent = exponent + reverse(i).getValue();
+                reverse(i).next();
+            }
+
+            LList x = exponential(productString, exponent, result);
+            product = new LList();
+            return multiplication(reverse(num1), x, stack, 0, product);
+        }
     }
 
     public static int getRemainder(LList list) {
