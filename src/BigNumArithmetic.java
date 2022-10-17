@@ -45,7 +45,7 @@ public class BigNumArithmetic {
                                 AStack mult = new AStack();
                                 Object num1 = stack.pop();
                                 Object num2 = stack.pop();
-                                product = multiplication(reverse(num1), reverse(num2), mult, loop, product);
+                                product = multiplication(reverse(num1), reverse(num2), mult, loop, 0, product);
                                 String productString = "";
                                 product.moveToStart();
                                 for (int i = 0; i < product.length(); i++) {
@@ -138,7 +138,7 @@ public class BigNumArithmetic {
         return sum;
     }
 
-    public static LList multiplication(LList num1, LList num2, AStack stack, LList loop, LList product) {
+    public static LList multiplication(LList num1, LList num2, AStack stack, LList loop, int count, LList product) {
         LList top;
         LList bottom;
 
@@ -157,18 +157,17 @@ public class BigNumArithmetic {
             while (stack.length() > 1) {
                 Object first = stack.pop();
                 Object second = stack.pop();
-                product = addition(reverse(first), reverse(second), product);
+                loop = addition(reverse(first), reverse(second), loop);
                 String sumString = "";
-                product.moveToStart();
-                for (int i = 0; i < product.length(); i++) {
-                    sumString = sumString + product.getValue();
-                    product.next();
+                loop.moveToStart();
+                for (int i = 0; i < loop.length(); i++) {
+                    sumString = sumString + loop.getValue();
+                    loop.next();
                 }
                 String strPattern = "^0+(?!$)";
                 sumString = sumString.replaceAll(strPattern, "");
                 stack.push(sumString);
             }
-
             product.moveToStart();
             product.insert(stack.pop());
             return product;
@@ -216,13 +215,17 @@ public class BigNumArithmetic {
                 sumString = sumString + loop.getValue();
                 loop.next();
             }
+            for (int i = count; i > 0; i--) {
+                sumString = sumString + "0";
+            }
             String strPattern = "^0+(?!$)";
             sumString = sumString.replaceAll(strPattern, "");
             stack.push(sumString);
             bottom.moveToStart();
             bottom.remove();
             loop.clear();
-            product = multiplication(top, bottom, stack, loop, product);
+            count++;
+            product = multiplication(top, bottom, stack, loop, count, product);
         }
         return product;
     }
