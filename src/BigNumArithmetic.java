@@ -15,39 +15,56 @@ public class BigNumArithmetic {
                 while (in.hasNext()) {
                     AStack stack = new AStack();
                     String s = in.nextLine();
+                    s = s.trim();
                     String[] AList = s.split("\\s+");
                     for (String item : AList) {
                         String strPattern = "^0+(?!$)";
                         item = item.replaceAll(strPattern, "");
                         System.out.print(item + " ");
                     }
+                    int valid = 0;
                     for (String value : AList) {
                         if ((!value.equals("+")) && (!value.equals("*")) && (!value.equals("^"))) {
                             stack.push(value);
                         } else {
-                            if (value.equals("+")) {
-                                LList sum = new LList();
-                                Object num1 = stack.pop();
-                                Object num2 = stack.pop();
-                                sum = addition(reverse(num1), reverse(num2), sum);
-                                stack.push(listToString(sum));
-                            } else if (value.equals("*")) {
-                                LList product = new LList();
-                                AStack mult = new AStack(100);
-                                Object num1 = stack.pop();
-                                Object num2 = stack.pop();
-                                product = multiplication(reverse(num1), reverse(num2), mult, 0, product);
-                                stack.push(listToString(product));
+                            if (stack.length() >= 2) {
+                                if (value.equals("+")) {
+                                    LList sum = new LList();
+                                    Object num1 = stack.pop();
+                                    Object num2 = stack.pop();
+                                    sum = addition(reverse(num1), reverse(num2), sum);
+                                    stack.push(listToString(sum));
+                                } else if (value.equals("*")) {
+                                    LList product = new LList();
+                                    AStack mult = new AStack(100);
+                                    Object num1 = stack.pop();
+                                    Object num2 = stack.pop();
+                                    product = multiplication(reverse(num1), reverse(num2), mult, 0, product);
+                                    stack.push(listToString(product));
+                                } else {
+                                    Object num1 = stack.pop();
+                                    Object num2 = stack.pop();
+                                    String result = exponential(num2.toString(), num1.toString());
+                                    stack.push(result);
+                                }
                             } else {
-                                Object num1 = stack.pop();
-                                Object num2 = stack.pop();
-                                String result = exponential(num2.toString(), num1.toString());
-                                stack.push(result);
+                                valid = -1;
                             }
                         }
                     }
-                    if (AList.length > 1) {
-                        System.out.println("= " + stack.pop());
+                    if (valid == 0) {
+                        if (AList.length > 1) {
+                            System.out.print("= ");
+                            if (stack.length() == 1) {
+                                System.out.println(stack.pop());
+                            } else {
+                                System.out.println();
+                                stack.clear();
+                            }
+                        }
+                    } else {
+                        System.out.println("= ");
+                        stack.clear();
                     }
                 }
                 in.close();
