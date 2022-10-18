@@ -383,6 +383,11 @@ public class BigNumArithmetic {
         }
     }
 
+    /**
+     * Method that converts a LList into a string and gets rid of leading zeros
+     * @param list LList to be converted
+     * @return String containing a BigNum
+     */
     public static String listToString(LList list) {
         String s = "";
         list.moveToStart();
@@ -395,6 +400,11 @@ public class BigNumArithmetic {
         return s;
     }
 
+    /**
+     * Method that looks at a LList and determines if a value carried over or not
+     * @param list LList to search
+     * @return int containing the carried value
+     */
     public static int getRemainder(LList list) {
         int carry = 0;
         list.moveToStart();
@@ -409,6 +419,11 @@ public class BigNumArithmetic {
         return carry;
     }
 
+    /**
+     * Method that converts an Object into a reverse LList
+     * @param obj Object containing a BigNum
+     * @return A LList containing a BigNum
+     */
     public static LList reverse(Object obj) {
         LList list = new LList();
         String s = obj.toString();
@@ -418,5 +433,4 @@ public class BigNumArithmetic {
         }
         return list;
     }
-
 }
