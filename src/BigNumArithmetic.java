@@ -107,69 +107,120 @@ public class BigNumArithmetic {
         }
     }
 
+    /**
+     * Recursive method that computes the sum of adding together two BigNums
+     * @param num1 LList containing a reversed BigNum
+     * @param num2 LList containing a reversed BigNum
+     * @param sum An empty LList used to store the resulting sum
+     * @return A LList containing a BigNum
+     */
     public static LList addition(LList num1, LList num2, LList sum) {
+
         if (num1.isEmpty() && num2.isEmpty()) {
+            /* Base case: Both num1 and num2 LLists are empty, return the sum LList */
             return sum;
         } else if (!num1.isEmpty() && num2.isEmpty()) {
+            /* Recursive case 1: num1 is not empty while num2 is */
+
+            /* Check the remainder, add to the current digit and then remove it from the LList */
             int carry = getRemainder(sum);
             num1.moveToStart();
             int carrySum = Character.getNumericValue((Character) num1.getValue()) + carry;
             num1.remove();
+
+            /* Figure out what has to carry */
             sum.moveToStart();
             if (carrySum > 9) {
+                /* If carrySum is greater than 9 then we need to carry a 1,
+                   first we insert the ones place into sum and then the 1 in front of it */
                 sum.insert(carrySum - 10);
                 sum.moveToStart();
                 sum.insert(1);
             } else {
+                /* If carrySum is less than 9 then we need to carry a 0,
+                   first we insert the carrySum into sum and then a 0 in front of it */
                 sum.insert(carrySum);
                 sum.moveToStart();
                 sum.insert(0);
             }
+
+            /* Recursive call */
             sum = addition(num1, num2, sum);
+
         } else if (num1.isEmpty() && !num2.isEmpty()) {
+            /* Recursive case 2: num1 is empty while num2 is not */
+
+            /* Check the remainder, add to the current digit and then remove it from the LList */
             int carry = getRemainder(sum);
             num2.moveToStart();
             int carrySum = Character.getNumericValue((Character) num2.getValue()) + carry;
             num2.remove();
+
+            /* Figure out what has to carry */
             sum.moveToStart();
             if (carrySum > 9) {
+                /* If carrySum is greater than 9 then we need to carry a 1,
+                   first we insert the ones place into sum and then the 1 in front of it */
                 sum.insert(carrySum - 10);
                 sum.moveToStart();
                 sum.insert(1);
             } else {
+                /* If carrySum is less than 9 then we need to carry a 0,
+                   first we insert the carrySum into sum and then a 0 in front of it */
                 sum.insert(carrySum);
                 sum.moveToStart();
                 sum.insert(0);
             }
+
+            /* Recursive call */
             sum = addition(num1, num2, sum);
+
         } else {
+            /* Recursive case 3: num1 and num2 are both not empty */
+
+            /* Get single digits from both LLists, add them together, and then remove them from their LLists */
             num1.moveToStart();
             num2.moveToStart();
-            int digitSum = (Character.getNumericValue((Character) num1.getValue())) + (Character.getNumericValue((Character) num2.getValue()));
+            int digitSum = (Character.getNumericValue((Character) num1.getValue()))
+                    + (Character.getNumericValue((Character) num2.getValue()));
             num1.remove();
             num2.remove();
+
             if (digitSum > 9) {
+                /* If digitSum is greater than 9 then we need to carry the tenths place, first we insert the
+                   ones place plus any remainder, and then the tenths place in front of it */
                 int ones = digitSum - 10;
-                int carry = getRemainder(sum);
-                sum.insert(ones + carry);
+                sum.insert(ones + getRemainder(sum));
                 sum.moveToStart();
                 sum.insert(1);
+
+                /* Recursive call */
                 sum = addition(num1, num2, sum);
+
             } else {
-                int carry = getRemainder(sum);
-                int carrySum = digitSum + carry;
+                /* If digitSum is less than 9, we need to add any remainders and check again if it is greater than 9 */
+                int carrySum = digitSum + getRemainder(sum);
+
                 sum.moveToStart();
                 if (carrySum > 9) {
+                    /* If carrySum is greater than 9 then we need to carry a 1,
+                       first we insert the ones place into sum and then the 1 in front of it */
                     sum.insert(carrySum - 10);
                     sum.insert(1);
                 } else {
+                    /* If carrySum is less than 9 then we need to carry a 0,
+                       first we insert the carrySum into sum and then a 0 in front of it */
                     sum.insert(carrySum);
                     sum.moveToStart();
                     sum.insert(0);
                 }
+
+                /* Recursive call */
                 sum = addition(num1, num2, sum);
             }
         }
+
+        /* Returns the sum LList */
         return sum;
     }
 
