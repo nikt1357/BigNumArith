@@ -252,7 +252,7 @@ public class BigNumArithmetic {
         if (bottom.isEmpty()) {
             /* Base case: bottom is empty, add together the values in the stack */
 
-            /* Pop off the tow two values of the stack and call the addition function on them
+            /* Pop off the top two values of the stack and call the addition function on them
                until the stack is empty */
             while (stack.length() > 1) {
                 Object first = stack.pop();
