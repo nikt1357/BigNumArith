@@ -108,7 +108,7 @@ public class BigNumArithmetic {
     }
 
     /**
-     * Recursive method that computes the sum of adding together two BigNums
+     * Recursive method that computes the sum of two BigNums
      * @param num1 LList containing a reversed BigNum
      * @param num2 LList containing a reversed BigNum
      * @param sum An empty LList used to store the resulting sum
@@ -224,11 +224,23 @@ public class BigNumArithmetic {
         return sum;
     }
 
+    /**
+     * Recursive method that computes the product of two BigNums
+     * @param num1 LList containing a reversed BigNum
+     * @param num2 LList containing a reversed BigNum
+     * @param stack AStack used for storing products of a single digit times a BigNum
+     * @param count int used to keep track of how many digits we've multiplied by
+     *              (how many zeros to add onto the end of the product)
+     * @param product An empty LList used to store the resulting product
+     * @return A LList containing a BigNum
+     */
     public static LList multiplication(LList num1, LList num2, AStack stack, int count, LList product) {
+
         LList top;
         LList bottom;
         LList loop = new LList();
 
+        /* Figures out which number is shorter and uses that as the bottom number */
         if (num1.length() >= num2.length()) {
             top = num1;
             bottom = num2;
@@ -238,6 +250,10 @@ public class BigNumArithmetic {
         }
 
         if (bottom.isEmpty()) {
+            /* Base case: bottom is empty, add together the values in the stack */
+
+            /* Pop off the tow two values of the stack and call the addition function on them
+               until the stack is empty */
             while (stack.length() > 1) {
                 Object first = stack.pop();
                 Object second = stack.pop();
@@ -245,64 +261,80 @@ public class BigNumArithmetic {
                 stack.push(listToString(loop));
                 loop.clear();
             }
+
+            /* Pop off the final value in the stack and insert it into the product LList */
             product.moveToStart();
             product.insert(stack.pop());
             return product;
+
         } else {
+            /* Recursive case: bottom is not empty */
+
             top.moveToStart();
             bottom.moveToStart();
+
+            /* Multiply the first value of bottom by every value of top */
             while (!top.isAtEnd()) {
                 int b = Character.getNumericValue((Character) bottom.getValue());
                 int t = Character.getNumericValue((Character) top.getValue());
                 int digitMult = b * t;
+
+                /* Figure out what has to carry, get any remainder and add it to digitMult */
+                int carry = getRemainder(loop);
+                int carrySum = digitMult + carry;
+                loop.moveToStart();
+
                 if (digitMult > 9) {
-                    int carry = getRemainder(loop);
-                    int carrySum = digitMult + carry;
-                    int ones = carrySum % 10;
-                    int tens = carrySum / 10;
-                    loop.moveToStart();
+                    /* If digitMult is greater than 9 then we need to check carrySum before
+                       inserting the tenths place */
                     if (carrySum > 9) {
-                        loop.insert(ones);
+                        /* If carrySum is greater than 9 then we need to carry the ones place, insert it
+                           into loop */
+                        loop.insert(carrySum % 10);
                     } else {
+                        /* If carrySum is less than 9 then just insert it into loop */
                         loop.insert(carrySum);
                     }
+
+                    /* Insert the tenths place into loop */
                     loop.moveToStart();
-                    loop.insert(tens);
-                    top.next();
+                    loop.insert(carrySum / 10);
                 } else {
-                    int carry = getRemainder(loop);
-                    int carrySum = digitMult + carry;
-                    loop.moveToStart();
+                    /* If digitMult is less than 9 then we need to check carrySum before inserting anything */
                     if (carrySum > 9) {
+                        /* If carrySum is greater than 9 then we need to insert the ones place and then carry the
+                           tenths place */
                         loop.insert(carrySum % 10);
                         loop.moveToStart();
                         loop.insert(carrySum / 10);
                     } else {
+                        /* If carrySum is less than 9 then we need to insert the carrySum and then carry a 0 */
                         loop.insert(carrySum);
                         loop.moveToStart();
                         loop.insert(0);
                     }
-                    top.next();
                 }
+
+                /* Move to the next digit in top */
+                top.next();
             }
 
-            String sumString = "";
-            loop.moveToStart();
-            for (int i = 0; i < loop.length(); i++) {
-                sumString = sumString + loop.getValue();
-                loop.next();
-            }
+            /* Convert the LList loop into a String and then add on the appropriate amount of zeros before
+               pushing onto the stack */
+            String sumString = listToString(loop);
             for (int i = count; i > 0; i--) {
                 sumString = sumString + "0";
             }
-            String strPattern = "^0+(?!$)";
-            sumString = sumString.replaceAll(strPattern, "");
             stack.push(sumString);
+
+            /* Remove the first value of bottom, increase the count, and make the recursive call */
             bottom.moveToStart();
             bottom.remove();
             count++;
             product = multiplication(top, bottom, stack, count, product);
         }
+
+        /* Returns the product LList */
         return product;
     }
 
