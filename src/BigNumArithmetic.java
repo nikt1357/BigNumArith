@@ -66,7 +66,7 @@ public class BigNumArithmetic {
                                        the exponential method on them and then push the result back on the stack */
                                     Object num1 = stack.pop();
                                     Object num2 = stack.pop();
-                                    String result = exponential(num2.toString(), num1.toString());
+                                    String result = exponentiation(num2.toString(), num1.toString());
                                     stack.push(result);
                                 }
                             } else {
@@ -338,27 +338,46 @@ public class BigNumArithmetic {
         return product;
     }
 
-    public static String exponential(String num1, String num2) {
+    /**
+     * Recursive method that computes the exponentiation of two BigNums
+     * @param num1 String containing a BigNum
+     * @param num2 String containing a BigNum
+     * @return A String containing a BigNum
+     */
+    public static String exponentiation(String num1, String num2) {
 
+        /* Convert num1 into a reverse LList and num2 into an int */
         LList base = reverse(num1);
         int n = Integer.parseInt(num2);
 
         if (n == 0) {
+            /* Base case: The exponent is 0 */
             return "1";
         } else if ((n % 2) == 0) {
+            /* Recursive case 1: The exponent is even */
             AStack stack = new AStack(100);
             LList product = new LList();
+
+            /* Compute the product of (base * base) and (exponent/2) */
             product = multiplication(base, reverse(num1), stack, 0, product);
             int i = n/2;
 
-            return exponential(listToString(product), String.valueOf(i));
+            /* Recursive call */
+            return exponentiation(listToString(product), String.valueOf(i));
+
         } else {
+            /* Recursive case 2: The exponent is odd */
             AStack stack = new AStack(100);
             LList product = new LList();
+
+            /* Compute the product of (base * base) and ((exponent - 1)/2) */
             product = multiplication(base, reverse(num1), new AStack(100), 0, product);
             int i = (n - 1) / 2;
 
-            String x = exponential(listToString(product), String.valueOf(i));
+            /* Recursive call */
+            String x = exponentiation(listToString(product), String.valueOf(i));
+
+            /* Return String of (base * recursive call) */
             product.clear();
             return listToString(multiplication(base, reverse(x), stack, 0, product));
         }
