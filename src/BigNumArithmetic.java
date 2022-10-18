@@ -5,6 +5,8 @@ public class BigNumArithmetic {
 
     public static void main(String[] args) {
         try {
+            /* Error checking statement:
+             If the number of arguments is not exactly 1, throw FileNotFoundException */
             if (args.length != 1) {
                 throw new FileNotFoundException("Incorrect number of arguments.");
             } else {
@@ -12,29 +14,47 @@ public class BigNumArithmetic {
                 FileInputStream file = new FileInputStream(args[0]);
                 Scanner in = new Scanner(file);
 
+                /* Reads through the input file line by line as a String */
+                /* Call .trim() on the String to get rid of whitespace on the edges, then split the String
+                   into an Array by whitespace */
                 while (in.hasNext()) {
                     AStack stack = new AStack();
-                    String s = in.nextLine();
-                    s = s.trim();
+                    String s = (in.nextLine()).trim();
                     String[] AList = s.split("\\s+");
+
+                    /* Iterates through the Array, removing leading zeros off every value */
                     for (String item : AList) {
                         String strPattern = "^0+(?!$)";
                         item = item.replaceAll(strPattern, "");
                         System.out.print(item + " ");
                     }
-                    int valid = 0;
+
+                    /* boolean to keep track of if operations performed are valid (i.e. 2 numbers for every operator) */
+                    boolean valid = true;
+
+                    /* Iterates through the Array,
+                       if the value is a number, push it on the stack
+                       if it's not then perform the corresponding operation */
                     for (String value : AList) {
                         if ((!value.equals("+")) && (!value.equals("*")) && (!value.equals("^"))) {
+                            /* Number found, push to stack */
                             stack.push(value);
                         } else {
+                            /* Check if there are at least two items on the stack,
+                               if there are, perform the corresponding operation
+                               if there's not, set the valid variable equal to -1*/
                             if (stack.length() >= 2) {
                                 if (value.equals("+")) {
+                                    /* Addition symbol found, pop two values off the stack and call
+                                       the addition method on them and then push the result back on the stack */
                                     LList sum = new LList();
                                     Object num1 = stack.pop();
                                     Object num2 = stack.pop();
                                     sum = addition(reverse(num1), reverse(num2), sum);
                                     stack.push(listToString(sum));
                                 } else if (value.equals("*")) {
+                                    /* Multiplication symbol found, pop two values off the stack and call
+                                       the multiplication method on them and then push the result back on the stack */
                                     LList product = new LList();
                                     AStack mult = new AStack(100);
                                     Object num1 = stack.pop();
@@ -42,19 +62,30 @@ public class BigNumArithmetic {
                                     product = multiplication(reverse(num1), reverse(num2), mult, 0, product);
                                     stack.push(listToString(product));
                                 } else {
+                                    /* Exponentiation symbol found, pop two values off the stack and call
+                                       the exponential method on them and then push the result back on the stack */
                                     Object num1 = stack.pop();
                                     Object num2 = stack.pop();
                                     String result = exponential(num2.toString(), num1.toString());
                                     stack.push(result);
                                 }
                             } else {
-                                valid = -1;
+                                valid = false;
                             }
                         }
                     }
-                    if (valid == 0) {
+
+                    /* Nested if statements to figure out what to print, if the valid variable has been set
+                       to false then just print the equals sign and clear the stack */
+                    if (valid) {
+                        /* First check if the line is blank (length of the array is greater than 1,
+                           if it is, first print just an equals sign,
+                           if it's not then do nothing */
                         if (AList.length > 1) {
                             System.out.print("= ");
+                            /* Then check the stack,
+                               if there is only one value then pop it and print it,
+                               if not then print a new line and clear the stack */
                             if (stack.length() == 1) {
                                 System.out.println(stack.pop());
                             } else {
@@ -67,6 +98,7 @@ public class BigNumArithmetic {
                         stack.clear();
                     }
                 }
+                /* Close the Scanner */
                 in.close();
             }
         } catch (FileNotFoundException e) {
